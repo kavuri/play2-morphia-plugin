@@ -51,10 +51,6 @@ public class MorphiaPlugin extends Plugin {
         if (!isEnabled) {
             return;
         }
-        // Register SLF4JLogrImplFactory as Logger -- upgrade to 0.107, no SLF4JLogrImplFactory defined
-        // @see http://nesbot.com/2011/11/28/play-2-morphia-logging-error
-//        MorphiaLoggerFactory.reset();
-//        MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
 
         String dbName = null;
         String username = null;
@@ -151,7 +147,6 @@ public class MorphiaPlugin extends Plugin {
     @Override
     public void onStop() {
         if (isEnabled) {
-//            MorphiaLoggerFactory.reset();
             morphia = null;
             ds = null;
             gridfs = null;
