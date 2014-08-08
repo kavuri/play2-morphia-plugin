@@ -15,7 +15,6 @@ import org.mongodb.morphia.mapping.Mapper;
 
 import play.Application;
 import play.Configuration;
-import play.Logger;
 import play.Play;
 import play.Plugin;
 import play.libs.Classpath;
@@ -244,17 +243,29 @@ public class MorphiaPlugin extends Plugin {
     }
 
     private MongoClient connect(String host, String port, String dbName, String username, String password) {
-        ServerAddress addr = null ;
-        try {
-			addr = new ServerAddress(host, Integer.parseInt(port));
-		} catch (Exception e) {
+        String[] ha = host.split("[,\\s;]+");
+        String[] pa = port.split("[,\\s;]+");
+        int len = ha.length;
+        if (len != pa.length) {
+            throw Configuration.root().reportError(ConfigKey.DB_HOST.getKey() + "-" + ConfigKey.DB_PORT.getKey(), "host and ports number does not match", null);
+        }
+        
+        List<ServerAddress> addrs = new ArrayList<ServerAddress>(ha.length);
+        for (int i = 0; i < len; ++i) {
+            try {
+                addrs.add(new ServerAddress(ha[i], Integer.parseInt(pa[i])));
+            } catch (Exception e) {
+                MorphiaLogger.error(e, "Error creating mongo connection to %s:%s", host, port);
+            }
+        }
+        if (addrs.isEmpty()) {
             throw Configuration.root().reportError(
                     ConfigKey.DB_HOST.getKey() + "-" + ConfigKey.DB_PORT.getKey(), "Cannot connect to mongodb: error creating mongo connection",
                     null);
 		}
         
     	MongoCredential mongoCredential = getMongoCredential(dbName, username, password) ;
-        return mongoCredential == null ? new MongoClient(addr) : new MongoClient(addr, Arrays.asList(mongoCredential));
+        return mongoCredential == null ? new MongoClient(addrs) : new MongoClient(addrs, Arrays.asList(mongoCredential));
     }
 	
     private MongoCredential getMongoCredential(String dbName, String username, String password) {
@@ -267,5 +278,4 @@ public class MorphiaPlugin extends Plugin {
 
     	return MongoCredential.createMongoCRCredential(username, dbName, password.toCharArray());
     }
-	
 }
