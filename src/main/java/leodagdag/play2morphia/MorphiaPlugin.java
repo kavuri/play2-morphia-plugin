@@ -246,7 +246,6 @@ public class MorphiaPlugin extends Plugin {
     private MongoClient connect(String host, String port, String dbName, String username, String password) {
         ServerAddress addr = null ;
         try {
-        	Logger.info("HOST:" + host + " port:"+port) ;
 			addr = new ServerAddress(host, Integer.parseInt(port));
 		} catch (Exception e) {
             throw Configuration.root().reportError(
