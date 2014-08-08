@@ -1,24 +1,28 @@
 package leodagdag.play2morphia;
 
+import com.mongodb.*;
+import com.mongodb.gridfs.GridFS;
+
+import leodagdag.play2morphia.utils.*;
+
 import org.mongodb.morphia.AbstractEntityInterceptor;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.ValidationExtension;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.logging.MorphiaLoggerFactory;
-import org.mongodb.morphia.logging.slf4j.SLF4JLogrImplFactory;
 import org.mongodb.morphia.mapping.Mapper;
-import org.mongodb.morphia.ValidationExtension;
-import com.mongodb.*;
-import com.mongodb.gridfs.GridFS;
-import leodagdag.play2morphia.utils.*;
+
 import play.Application;
 import play.Configuration;
+import play.Logger;
+import play.Play;
 import play.Plugin;
 import play.libs.Classpath;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +37,7 @@ public class MorphiaPlugin extends Plugin {
 
     private static Morphia morphia = null;
 
-    private static Mongo mongo = null;
+    private static MongoClient mongo = null;
     private static Datastore ds = null;
     private static GridFS gridfs;
 
@@ -47,13 +51,18 @@ public class MorphiaPlugin extends Plugin {
         if (!isEnabled) {
             return;
         }
-        // Register SLF4JLogrImplFactory as Logger
+        // Register SLF4JLogrImplFactory as Logger -- upgrade to 0.107, no SLF4JLogrImplFactory defined
         // @see http://nesbot.com/2011/11/28/play-2-morphia-logging-error
-        MorphiaLoggerFactory.reset();
-        MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+//        MorphiaLoggerFactory.reset();
+//        MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+
+        String dbName = null;
+        String username = null;
+        String password = null;    
+        Configuration morphiaConf = null ;
 
         try {
-            Configuration morphiaConf = Configuration.root().getConfig(ConfigKey.PREFIX);
+            morphiaConf = Configuration.root().getConfig(ConfigKey.PREFIX);
             if (morphiaConf == null) {
                 throw Configuration.root().reportError(ConfigKey.PREFIX, "Missing Morphia configuration", null);
             }
@@ -61,26 +70,11 @@ public class MorphiaPlugin extends Plugin {
             MorphiaLogger.debug(morphiaConf);
 
             String mongoURIstr = morphiaConf.getString(ConfigKey.DB_MONGOURI.getKey());
-            String seeds = morphiaConf.getString(ConfigKey.DB_SEEDS.getKey());
-
-            String dbName = null;
-            String username = null;
-            String password = null;
-            
-            if(StringUtils.isNotBlank(mongoURIstr)) {
-                MongoURI mongoURI = new MongoURI(mongoURIstr);
-                mongo = connect(mongoURI);
-                dbName = mongoURI.getDatabase();
-                username = mongoURI.getUsername();
-                if(mongoURI.getPassword() != null) {
-                    password = new String(mongoURI.getPassword());    
-                }
-            } else if (StringUtils.isNotBlank(seeds)) {
-                mongo = connect(seeds);
+            String seeds = null ;
+            if(Play.isDev()) {
+            	seeds = morphiaConf.getString(ConfigKey.DB_DEV_SEEDS.getKey());
             } else {
-                mongo = connect(
-                        morphiaConf.getString(ConfigKey.DB_HOST.getKey()),
-                        morphiaConf.getString(ConfigKey.DB_PORT.getKey()));
+            	seeds = morphiaConf.getString(ConfigKey.DB_SEEDS.getKey());
             }
 
             if (StringUtils.isBlank(dbName)) {
@@ -90,14 +84,6 @@ public class MorphiaPlugin extends Plugin {
                 }
             }
 
-            morphia = new Morphia();
-            // To prevent problem during hot-reload
-            if (application.isDev()) {
-                morphia.getMapper().getOptions().objectFactory = new PlayCreator();
-            }
-            // Configure validator
-            new ValidationExtension(morphia);
-
             //Check if credentials parameters are present
             if (StringUtils.isBlank(username)) {
                 username = morphiaConf.getString(ConfigKey.DB_USERNAME.getKey());
@@ -106,22 +92,34 @@ public class MorphiaPlugin extends Plugin {
                 password = morphiaConf.getString(ConfigKey.DB_PASSWORD.getKey());
             }
 
-            if (StringUtils.isNotBlank(username) ^ StringUtils.isNotBlank(password)) {
-                throw morphiaConf.reportError(ConfigKey.DB_NAME.getKey(), "Missing username or password", null);
+            if(StringUtils.isNotBlank(mongoURIstr)) {
+                MongoClientURI mongoURI = new MongoClientURI(mongoURIstr);
+                mongo = connect(mongoURI);
+            } else if (StringUtils.isNotBlank(seeds)) {
+                mongo = connect(seeds, dbName, username, password);
+            } else {
+                mongo = connect(
+                        morphiaConf.getString(ConfigKey.DB_HOST.getKey()),
+                        morphiaConf.getString(ConfigKey.DB_PORT.getKey()),
+                        dbName, username, password);
             }
+            
+            morphia = new Morphia();
+            // To prevent problem during hot-reload
+            if (application.isDev()) {
+                morphia.getMapper().getOptions().objectFactory = new PlayCreator();
+            }
+            // Configure validator
+            new ValidationExtension(morphia);
 
             // Create datastore
-            if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-                ds = morphia.createDatastore(mongo, dbName, username, password.toCharArray());
-            } else {
-                ds = morphia.createDatastore(mongo, dbName);
-            }
+            ds = morphia.createDatastore(mongo, dbName);
 
 
             MorphiaLogger.debug("Datastore [%s] created", dbName);
             // Create GridFS
             String uploadCollection = morphiaConf.getString(ConfigKey.COLLECTION_UPLOADS.getKey());
-            if (StringUtils.isBlank(dbName)) {
+            if (StringUtils.isBlank(uploadCollection)) {
                 uploadCollection = "uploads";
                 MorphiaLogger.warn("Missing Morphia configuration key [%s]. Use default value instead [%s]", ConfigKey.COLLECTION_UPLOADS, "uploads");
             }
@@ -153,7 +151,7 @@ public class MorphiaPlugin extends Plugin {
     @Override
     public void onStop() {
         if (isEnabled) {
-            MorphiaLoggerFactory.reset();
+//            MorphiaLoggerFactory.reset();
             morphia = null;
             ds = null;
             gridfs = null;
@@ -198,6 +196,10 @@ public class MorphiaPlugin extends Plugin {
         }
         return ds;
     }
+    
+    public static Morphia morphia() {
+    	return morphia ;
+    }
 
     public static Datastore ds() {
         return ds;
@@ -211,16 +213,16 @@ public class MorphiaPlugin extends Plugin {
         return ds().getDB();
     }
 
-    private Mongo connect(MongoURI mongoURI) {
+    private MongoClient connect(MongoClientURI mongoURI) {
         try {
-            return new Mongo(mongoURI);
+            return new MongoClient(mongoURI);
         }
         catch(UnknownHostException e) {
             throw Configuration.root().reportError(ConfigKey.DB_MONGOURI.getKey(), "Cannot connect to mongodb: unknown host", e);
         }
     }
 
-    private Mongo connect(String seeds) {
+    private MongoClient connect(String seeds, String dbName, String username, String password) {
         String[] sa = seeds.split("[;,\\s]+");
         List<ServerAddress> addrs = new ArrayList<ServerAddress>(sa.length);
         for (String s : sa) {
@@ -242,41 +244,34 @@ public class MorphiaPlugin extends Plugin {
         if (addrs.isEmpty()) {
             throw Configuration.root().reportError(ConfigKey.DB_SEEDS.getKey(), "Cannot connect to mongodb: no replica can be connected", null);
         }
-        return new Mongo(addrs);
+    	MongoCredential mongoCredential = getMongoCredential(dbName, username, password) ;
+        return mongoCredential == null ? new MongoClient(addrs) : new MongoClient(addrs, Arrays.asList(mongoCredential)) ;
     }
 
-    private Mongo connect(String host, String port) {
-        String[] ha = host.split("[,\\s;]+");
-        String[] pa = port.split("[,\\s;]+");
-        int len = ha.length;
-        if (len != pa.length) {
-            throw Configuration.root().reportError(ConfigKey.DB_HOST.getKey() + "-" + ConfigKey.DB_PORT.getKey(), "host and ports number does not match", null);
-        }
-        if (1 == len) {
-            try {
-                return new Mongo(ha[0], Integer.parseInt(pa[0]));
-            } catch (Exception e) {
-                throw Configuration.root().reportError(
-                        ConfigKey.DB_HOST.getKey() + "-"
-                                + ConfigKey.DB_PORT.getKey(),
-                        String.format("Cannot connect to mongodb at %s:%s",
-                                host, port), e);
-            }
-        }
-        List<ServerAddress> addrs = new ArrayList<ServerAddress>(ha.length);
-        for (int i = 0; i < len; ++i) {
-            try {
-                addrs.add(new ServerAddress(ha[i], Integer.parseInt(pa[i])));
-            } catch (Exception e) {
-                MorphiaLogger.error(e, "Error creating mongo connection to %s:%s", host, port);
-            }
-        }
-        if (addrs.isEmpty()) {
+    private MongoClient connect(String host, String port, String dbName, String username, String password) {
+        ServerAddress addr = null ;
+        try {
+        	Logger.info("HOST:" + host + " port:"+port) ;
+			addr = new ServerAddress(host, Integer.parseInt(port));
+		} catch (Exception e) {
             throw Configuration.root().reportError(
-                    ConfigKey.DB_HOST.getKey() + "-" + ConfigKey.DB_PORT.getKey(), "Cannot connect to mongodb: no replica can be connected",
+                    ConfigKey.DB_HOST.getKey() + "-" + ConfigKey.DB_PORT.getKey(), "Cannot connect to mongodb: error creating mongo connection",
                     null);
-        }
-        return new Mongo(addrs);
+		}
+        
+    	MongoCredential mongoCredential = getMongoCredential(dbName, username, password) ;
+        return mongoCredential == null ? new MongoClient(addr) : new MongoClient(addr, Arrays.asList(mongoCredential));
     }
+	
+    private MongoCredential getMongoCredential(String dbName, String username, String password) {
+    	if (StringUtils.isBlank(username) && StringUtils.isBlank(password))
+    		return null ;
+    	
+        if (StringUtils.isNotBlank(username) ^ StringUtils.isNotBlank(password)) {
+            throw Configuration.root().reportError(ConfigKey.DB_NAME.getKey(), "Missing username or password", null);
+        }
 
+    	return MongoCredential.createMongoCRCredential(username, dbName, password.toCharArray());
+    }
+	
 }

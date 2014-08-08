@@ -7,7 +7,7 @@ import play.Play;
 public class PlayCreator extends DefaultCreator {
 
     @Override
-    protected ClassLoader getClassLoaderForClass(String clazz, DBObject object) {
+    protected ClassLoader getClassLoaderForClass() {
         return Play.application().classloader();
     }
 }

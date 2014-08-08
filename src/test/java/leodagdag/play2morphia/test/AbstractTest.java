@@ -5,8 +5,7 @@ import leodagdag.play2morphia.MorphiaPlugin;
 import leodagdag.play2morphia.test.utils.TestConfig;
 import org.apache.commons.lang3.StringUtils;
 
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.running;
+import static play.test.Helpers.*;
 
 /**
  * User: leo
