@@ -3,24 +3,6 @@ Plug-in to use Morphia/MongoDB with [Play! framework](http://www.playframework.o
 
 _inpired by [greenlaw110 / play-morphia](https://github.com/greenlaw110/play-morphia)_
 
-
-TODO
-
-play.modules.disabled += "leodagdag.play2morphia.PasswordDecryptorModule"
-
-import leodagdag.play2morphia.IPasswordDecryptor;
-
-public class HEXnPBEPasswordDecryptor implements IPasswordDecryptor {
-    @Override
-    public String decrypt(String encrypted) {
-	    String decrypted = .....
-        return decrypted ;
-    }
-}
-
- bind(IPasswordDecryptor.class).to(HEXnPBEPasswordDecryptor.class);
- 
-
 # Publish it
 
 Using
@@ -33,7 +15,7 @@ to publish it to the local repository, so that you could reference it in your pl
 
 Add the following to your build's library dependency:
 ``````
-"leodagdag"  %% "play2-morphia-plugin"  % "0.0.16"
+"leodagdag"  %% "play2-morphia-plugin"  % "0.2.4"
 ``````
 
 ### Configuring the plugin in conf/play.plugins like the following:
@@ -73,5 +55,34 @@ Using the following methods in MorphiaPlugin class for data base operations
 `````
     public static Morphia morphia() ;
     public static Datastore ds() ;
+    public static Datastore ds(String dbname) ;
     public static GridFS gridFs() ;
 `````
+
+### Play 2.4
+
+Play 2.4 support [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection). There is a morphia module defined. You could inject the morphia by
+``````
+  @Inject IMorphia morphia ;
+``````
+in your component. This will use the configuration prefixed with 'morphia' in the application.conf. You could also use your own prefix name, for example:
+``````
+mymorphia.db.host="127.0.0.1"
+.....
+``````
+then injected it by:
+``````
+  @Inject @ConfigPrefix("mymorphia") IMorphia morphia ;
+``````
+
+IMorphia Interface:
+``````
+public interface IMorphia {
+    public Morphia morphia();
+    public Datastore ds(String dbName);
+    public Datastore ds();
+    public DB db();
+    public GridFS gridFs();
+
+}
+``````

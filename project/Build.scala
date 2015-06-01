@@ -25,7 +25,7 @@ object Play2MorphiaPluginBuild extends Build {
       javacOptions ++= Seq("-source", "1.8", "-encoding", "utf8"),
 	    unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
       resolvers ++= Seq(DefaultMavenRepository, Resolvers.typesafeRepository),
-      checksums := Nil // To prevent proxyToys downloding fails https://github.com/leodagdag/play2-morphia-plugin/issues/11
+      checksums := Nil // To prevent proxyToys downloding fails https://github.com/leodagdag/play2-morphia-plugin/issues/11,
     )
   ).settings(commonSettings:_*)
 
