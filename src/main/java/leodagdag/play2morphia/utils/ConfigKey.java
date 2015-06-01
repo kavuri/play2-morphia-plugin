@@ -12,7 +12,8 @@ public enum ConfigKey {
     ID_TYPE("id.type"), /**/
     DEFAULT_WRITE_CONCERN("defaultWriteConcern"), /**/
     COLLECTION_UPLOADS("collection.upload"), /**/
-    LOGGER("logger");
+    LOGGER("logger"),
+    CONNECTIONS_PER_HOST("connectionsPerHost") ;
 
     public static final String PREFIX = "morphia";
 

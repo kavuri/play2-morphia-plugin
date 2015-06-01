@@ -3,7 +3,4 @@ logLevel := Level.Warn
 // Use for intellij
 // resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
 
-// Use for intellij
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
-
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.5.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")

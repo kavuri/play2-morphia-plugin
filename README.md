@@ -3,6 +3,24 @@ Plug-in to use Morphia/MongoDB with [Play! framework](http://www.playframework.o
 
 _inpired by [greenlaw110 / play-morphia](https://github.com/greenlaw110/play-morphia)_
 
+
+TODO
+
+play.modules.disabled += "leodagdag.play2morphia.PasswordDecryptorModule"
+
+import leodagdag.play2morphia.IPasswordDecryptor;
+
+public class HEXnPBEPasswordDecryptor implements IPasswordDecryptor {
+    @Override
+    public String decrypt(String encrypted) {
+	    String decrypted = .....
+        return decrypted ;
+    }
+}
+
+ bind(IPasswordDecryptor.class).to(HEXnPBEPasswordDecryptor.class);
+ 
+
 # Publish it
 
 Using

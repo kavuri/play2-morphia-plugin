@@ -20,7 +20,8 @@ object Play2MorphiaPluginBuild extends Build {
           Some(dropboxReleaseRepository)
       },
       scalacOptions ++= Seq("-Xlint", "-deprecation", "-unchecked", "-encoding", "utf8"),
-      javacOptions ++= Seq("-source", "1.6", "-encoding", "utf8"),
+      javacOptions ++= Seq("-source", "1.8", "-encoding", "utf8"),
+	    unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
       resolvers ++= Seq(DefaultMavenRepository, Resolvers.typesafeRepository),
       checksums := Nil // To prevent proxyToys downloding fails https://github.com/leodagdag/play2-morphia-plugin/issues/11
     )
@@ -35,22 +36,25 @@ object Play2MorphiaPluginBuild extends Build {
 
   object Dependencies {
     val runtime = Seq(
-      "org.mongodb.morphia" % "morphia" % "0.108",
-      "org.mongodb.morphia" % "morphia-logging-slf4j" % "0.108",
-      "org.mongodb.morphia" % "morphia-validation" % "0.108",
-      "org.mongodb" % "mongo-java-driver" % "2.12.3",
-	  "com.typesafe.play" %% "play-java" % "2.3.2" % "provided"
+	     "org.mongodb" % "mongodb-driver" % "3.0.2",
+       "org.mongodb.morphia" % "morphia" % "0.111" exclude("org.mongodb", "mongo-java-driver"),
+       "org.mongodb.morphia" % "morphia-validation" % "0.111" exclude("org.mongodb", "mongo-java-driver"),
+	     "org.mongodb.morphia" % "morphia-logging-slf4j" % "0.111" exclude("org.mongodb", "mongo-java-driver"),
+	    "com.typesafe.play" %% "play-java" % "2.4.0" % "provided"
     )
+	
     val test = Seq(
-	"com.typesafe.play" %% "play-test" % "2.3.2" % "test"
+  	   "com.typesafe.play" %% "play-test" % "2.4.0" % "test",
+	     "junit" % "junit" % "4.12" % "test",
+      "org.easytesting" % "fest-assert" % "1.4" % "test"
     )
   }
 
   object BuildSettings {
     val buildOrganization = "leodagdag"
-    val buildVersion = "0.0.16"
-    val buildScalaVersion = "2.11.1"
-    val crossBuildVersions = Seq("2.11.1", "2.10.4")
+    val buildVersion = "0.2.4"
+    val buildScalaVersion = "2.11.6"
+    val crossBuildVersions = Seq("2.11.6", "2.10.4")
     val buildSettings = Defaults.defaultSettings ++ Seq(
       organization := buildOrganization,
       version := buildVersion,
