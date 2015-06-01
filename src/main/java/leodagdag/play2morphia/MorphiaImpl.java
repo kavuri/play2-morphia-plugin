@@ -39,15 +39,15 @@ public class MorphiaImpl implements IMorphia {
     private Application application;
     private ApplicationLifecycle lifecycle ;
     private IPasswordDecryptor passwordDecryptor ;
-    private String name ;
+    private String prefixName ;
 
     private Morphia morphia = null;
     private MongoClient mongo = null;
     private Datastore ds = null;
     private GridFS gridfs;
 
-    public MorphiaImpl(String name, Application application, ApplicationLifecycle lifecycle, IPasswordDecryptor passwordDecryptor) {
-        this.name = name ;
+    public MorphiaImpl(String prefixName, Application application, ApplicationLifecycle lifecycle, IPasswordDecryptor passwordDecryptor) {
+        this.prefixName = prefixName ;
         this.application = application ;
         this.lifecycle = lifecycle ;
         this.passwordDecryptor = passwordDecryptor ;
@@ -116,15 +116,23 @@ public class MorphiaImpl implements IMorphia {
         Configuration morphiaConf = null ;
 
         try {
-            morphiaConf = Configuration.root().getConfig(ConfigKey.PREFIX);
+            morphiaConf = Configuration.root().getConfig(prefixName);
             if (morphiaConf == null) {
-                throw Configuration.root().reportError(ConfigKey.PREFIX, "Missing Morphia configuration", null);
+                throw Configuration.root().reportError(prefixName, "Missing Morphia configuration", null);
             }
 
             MorphiaLogger.debug(morphiaConf);
 
             String mongoURIstr = morphiaConf.getString(ConfigKey.DB_MONGOURI.getKey());
             Logger.debug("mongoURIstr:" + mongoURIstr);
+
+            if(StringUtils.isNotBlank(mongoURIstr)) {
+                MongoClientURI mongoURI = new MongoClientURI(mongoURIstr);
+                if (mongoURI.getDatabase() != null) {
+                    dbName = mongoURI.getDatabase();  // used by morphia.createDatastore() in the following
+                }
+            }
+
             String seeds = null ;
             if(Play.isDev()) {
                 seeds = morphiaConf.getString(ConfigKey.DB_DEV_SEEDS.getKey());
@@ -157,11 +165,6 @@ public class MorphiaImpl implements IMorphia {
 
             if(StringUtils.isNotBlank(mongoURIstr)) {
                 MongoClientURI mongoURI = new MongoClientURI(mongoURIstr);
-                dbName = mongoURI.getDatabase();  // used by morphia.createDatastore() in the following
-                //username = mongoURI.getUsername();
-                //if(mongoURI.getPassword() != null) {
-                //    password = new String(mongoURI.getPassword());
-                //}
                 mongo = connect(mongoURI);
             } else if (StringUtils.isNotBlank(seeds)) {
                 mongo = connect(seeds, dbName, username, password, options);
