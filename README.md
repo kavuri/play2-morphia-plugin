@@ -37,8 +37,8 @@ morphia.db.username=<username>
 morphia.db.password=<password>
 ``````
 
-### MorphiaPlugin
-Using the following methods in MorphiaPlugin class for data base operations
+### The MorphiaPlugin class
+Using the following methods in the MorphiaPlugin class for data base operations
 `````
     public static Morphia morphia() ;
     public static Datastore ds() ;
@@ -93,11 +93,11 @@ Then binding this implementation to IPasswordDecryptor in your module:
    bind(IPasswordDecryptor.class).to(MyPasswordDecryptor.class)
 ``````
 
-see Providing custom bindings in [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection).
+see **Providing custom bindings** in [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection).
 
 In application.conf, you should disable the default password decryptor module:
 ``````
    play.modules.disabled += "leodagdag.play2morphia.PasswordDecryptorModule"
 ``````
 
-see Excluding modules in [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection).
+see **Excluding modules** in [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection).
