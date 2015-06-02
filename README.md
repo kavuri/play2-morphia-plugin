@@ -86,3 +86,25 @@ public interface IMorphia {
 
 }
 ``````
+
+##### Password Decryptor
+
+The password is default to plain text. If a decrypted password is used, you should define a decryptor for the passworkd by implementing IPasswordDecryptor interface:
+
+public class MyPasswordDecryptor implements IPasswordDecryptor {
+    @Override
+    public String decrypt(String encrypted) {
+	    String decryptedPwd = ....
+        return decryptedPwd;
+    }
+}
+
+Binding this implementation to IPasswordDecryptor in your module:
+``````
+   bind(IPasswordDecryptor.class).to(MyPasswordDecryptor.class)
+``````
+
+In application.conf, you should disable the default password module in this project:
+``````
+   play.modules.disabled += "leodagdag.play2morphia.evolutions.PasswordDecryptorModule"
+``````
