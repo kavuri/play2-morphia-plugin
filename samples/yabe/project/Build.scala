@@ -13,7 +13,9 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
       // Add your project dependencies here,
-      "leodagdag"  %% "play2-morphia-plugin"  % "0.2.4"
+      "leodagdag"  %% "play2-morphia-plugin"  % "0.2.4",
+      "junit" % "junit" % "4.12" % "test",
+      "org.easytesting" % "fest-assert" % "1.4" % "test"
     )
 
 	val main = Project(appName, file(".")).enablePlugins(play.PlayJava)	  
