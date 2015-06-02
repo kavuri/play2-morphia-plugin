@@ -1,3 +1,6 @@
+import play.sbt.routes.RoutesCompiler
+import play.sbt.routes.RoutesKeys._
+
 import sbt._
 import Keys._
 import play.Play.autoImport._
@@ -10,20 +13,18 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
       // Add your project dependencies here,
-      "leodagdag"  %% "play2-morphia-plugin"  % "0.0.16"
+      "leodagdag"  %% "play2-morphia-plugin"  % "0.2.4"
     )
 
 	val main = Project(appName, file(".")).enablePlugins(play.PlayJava)	  
     .settings(
         version := appVersion,
-		scalaVersion := "2.11.1",
+		scalaVersion := "2.11.6",
         libraryDependencies ++= appDependencies,
-    	resolvers ++= Seq(DefaultMavenRepository, Resolvers.githubRepository)
-    )
 
-	object Resolvers {
-      val githubRepository = "LeoDagDag repository" at "http://leodagdag.github.com/repository/"
-      val dropboxRepository = "Dropbox repository" at "http://dl.dropbox.com/u/18533645/repository/"
-	}
+		// Play provides two styles of routers, one expects its actions to be injected, the
+        // other, legacy style, accesses its actions statically.
+        routesGenerator := InjectedRoutesGenerator
+    )
 
 }
