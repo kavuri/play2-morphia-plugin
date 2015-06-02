@@ -1,5 +1,5 @@
 # play2-morphia-plugin [![Build Status](https://secure.travis-ci.org/leodagdag/play2-morphia-plugin.png)](http://travis-ci.org/leodagdag/play2-morphia-plugin)
-Plug-in to use Morphia/MongoDB with [Play! framework](http://www.playframework.org/2.0) 2.0
+Plug-in to use Morphia/MongoDB with [Play! framework](https://www.playframework.com/documentation/2.4.x/Home) 2.4
 
 _inpired by [greenlaw110 / play-morphia](https://github.com/greenlaw110/play-morphia)_
 
@@ -18,10 +18,6 @@ Add the following to your build's library dependency:
 "leodagdag"  %% "play2-morphia-plugin"  % "0.2.4"
 ``````
 
-### Configuring the plugin in conf/play.plugins like the following:
-``````
-5000:leodagdag.play2morphia.MorphiaPlugin
-``````
 ### Configuring the connection in conf/application.conf
 ``````
 morphia.db.host="127.0.0.1"
@@ -40,17 +36,8 @@ morphia.db.dev.seeds="127.0.0.1:27017"
 morphia.db.username=<username>
 morphia.db.password=<password>
 ``````
-Other configuration parameters:
-``````
-%prod.morphia.db.name=yabe
-morphia.db.name=dev
-morphia.id.type=Long
-morphia.defaultWriteConcern=SAFE
-morphia.collection.upload=fs
-morphia.logger=false
-``````
 
-### Database operations
+### MorphiaPlugin
 Using the following methods in MorphiaPlugin class for data base operations
 `````
     public static Morphia morphia() ;
@@ -59,9 +46,11 @@ Using the following methods in MorphiaPlugin class for data base operations
     public static GridFS gridFs() ;
 `````
 
-### Play 2.4
+The plugin is deprecated in Play 2.4. You'd better use dependency injection for the database operations. The MorphiaPlugin class is provided here for the compatibility for the previous versions. 
 
-Play 2.4 support [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection). There is a morphia module defined. You could inject the morphia by
+### Dependency Injection 
+
+Play 2.4 supports [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection). There is a morphia module defined. You could inject it by
 ``````
   @Inject IMorphia morphia ;
 ``````
