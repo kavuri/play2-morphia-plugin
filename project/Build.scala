@@ -15,18 +15,14 @@ object Play2MorphiaPluginBuild extends Build {
     settings = buildSettings ++ Seq(
     libraryDependencies := runtime ++ test,
 
-    publishTo := {
-       val mybean = "http://repo.mybean.cn:8081/"
-       if (version.value.trim.endsWith("SNAPSHOT"))
-         Some("snapshots" at mybean + "artifactory/libs-snapshot-local")
-       else
-         Some("releases"  at mybean + "artifactory/libs-release-local")
-    },
-    publishArtifact in Test := false,
-    publishMavenStyle := true,
-    pomIncludeRepository := { x => false },
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
-	
+      publishMavenStyle := true,
+      publishTo := {
+        if (buildVersion.trim.endsWith("SNAPSHOT"))
+          Some(dropboxSnapshotRepository)
+        else
+          Some(dropboxReleaseRepository)
+      },
+	  
       scalacOptions ++= Seq("-Xlint", "-deprecation", "-unchecked", "-encoding", "utf8"),
       javacOptions ++= Seq("-source", "1.8", "-encoding", "utf8"),
 	    unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
