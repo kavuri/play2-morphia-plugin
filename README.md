@@ -106,5 +106,5 @@ Then binding this implementation to IPasswordDecryptor in your module:
 
 In application.conf, you should disable the default password decryptor module:
 ``````
-   play.modules.disabled += "leodagdag.play2morphia.evolutions.PasswordDecryptorModule"
+   play.modules.disabled += "leodagdag.play2morphia.PasswordDecryptorModule"
 ``````
