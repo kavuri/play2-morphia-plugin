@@ -33,7 +33,8 @@ public class MorphiaPlugin extends Plugin {
     }
     
     public static Morphia morphia() {
-    	return null ;
+        IMorphia mp = play.Play.application().plugin(MorphiaPlugin.class).morphia;
+        return mp.morphia() ;
     }
 
     public static Datastore ds() {
