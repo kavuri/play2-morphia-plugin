@@ -1,6 +1,7 @@
 package leodagdag.play2morphia;
 
 import play.Application;
+import play.Logger;
 import play.inject.ApplicationLifecycle;
 
 import javax.inject.Inject;
@@ -21,17 +22,20 @@ public class DefaultMorphiaApi implements MorphiaApi {
     @Inject
     private IPasswordDecryptor passwordDecryptor ;
 
-    private final Map<String, IMorphia> morphiaMap;
+    private static Map<String, IMorphia> morphiaMap;
 
     public  DefaultMorphiaApi() {
         morphiaMap = new HashMap<>() ;
     }
     public IMorphia get(String prefix) {
-        IMorphia morphia = morphiaMap.get(prefix) ;
-        if ( morphia == null ) {
-            morphia = new MorphiaImpl(prefix, application, lifecycle, passwordDecryptor);
-            morphiaMap.put(prefix, morphia) ;
+        synchronized (DefaultMorphiaApi.class) {
+            IMorphia morphia = morphiaMap.get(prefix);
+            if (morphia == null) {
+                Logger.info("init:prefix:" + prefix) ;
+                morphia = new MorphiaImpl(prefix, application, lifecycle, passwordDecryptor);
+                morphiaMap.put(prefix, morphia);
+            }
+            return morphia ;
         }
-        return morphia ;
     }
 }

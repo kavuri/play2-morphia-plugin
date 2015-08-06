@@ -1,5 +1,6 @@
 package leodagdag.play2morphia.test;
 
+import models.Post;
 import org.mongodb.morphia.query.Query;
 import leodagdag.play2morphia.MorphiaPlugin;
 import leodagdag.play2morphia.test.models.*;

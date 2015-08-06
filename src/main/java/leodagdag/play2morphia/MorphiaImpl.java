@@ -230,6 +230,11 @@ public class MorphiaImpl implements IMorphia {
             MorphiaLogger.debug("mapping class: %1$s", clazz);
             morphia.map(clazz);
         }
+
+        // tell morphia where to find your classes
+        // can be called multiple times with different packages or classes
+       // morphia.mapPackage("models");
+
         // @see http://code.google.com/p/morphia/wiki/Datastore#Ensure_Indexes_and_Caps
         ds.ensureCaps(); //creates capped collections from @Entity
         ds.ensureIndexes(); //creates indexes from @Index annotations in your entities

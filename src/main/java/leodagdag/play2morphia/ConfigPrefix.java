@@ -9,5 +9,5 @@ import java.lang.annotation.RetentionPolicy;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigPrefix {
-    String value() default ConfigKey.PREFIX;
+    String value() default "";
 }

@@ -15,7 +15,7 @@ to publish it to the local repository, so that you could reference it in your pl
 
 Add the following to your build's library dependency:
 ``````
-"leodagdag"  %% "play2-morphia-plugin"  % "0.2.4"
+"leodagdag"  %% "play2-morphia-plugin"  % "0.2.4.1"
 ``````
 
 ### Configuring the connection in conf/application.conf

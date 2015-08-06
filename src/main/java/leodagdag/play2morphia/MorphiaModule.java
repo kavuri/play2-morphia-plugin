@@ -20,8 +20,8 @@ public class MorphiaModule extends Module {
 
         ImmutableList.Builder<Binding<?>> list = new ImmutableList.Builder<Binding<?>>();
 
-        list.add(bind(IMorphia.class).to(new MorphiaProvider(ConfigKey.PREFIX)));  // @Inject IMorphia morphia
         list.add(bind(MorphiaApi.class).to(DefaultMorphiaApi.class));
+        list.add(bind(IMorphia.class).to(new MorphiaProvider(defaultDBPrefix)));  // for no prefixed injection
 
         list.add(bindDB(defaultDBPrefix)) ;
 

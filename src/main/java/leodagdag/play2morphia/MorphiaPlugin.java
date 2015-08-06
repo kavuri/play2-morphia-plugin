@@ -18,7 +18,7 @@ import javax.inject.Inject;
  * see https://playframework.com/documentation/2.4.x/JavaDependencyInjection
  */
 public class MorphiaPlugin extends Plugin {
-    @Inject @ConfigPrefix
+    @Inject
     private IMorphia morphia;
 
     @Inject

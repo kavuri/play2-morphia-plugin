@@ -41,14 +41,14 @@ object Play2MorphiaPluginBuild extends Build {
   object Dependencies {
     val runtime = Seq(
 	   "org.mongodb" % "mongodb-driver" % "3.0.2",
-       "org.mongodb.morphia" % "morphia" % "1.0.0" exclude("org.mongodb", "mongo-java-driver"),
-       "org.mongodb.morphia" % "morphia-validation" % "1.0.0" exclude("org.mongodb", "mongo-java-driver") exclude("javax.validation", "validation-api"),
-	   "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.0.0" exclude("org.mongodb", "mongo-java-driver"),
-	   "com.typesafe.play" %% "play-java" % "2.4.0" % "provided"
+       "org.mongodb.morphia" % "morphia" % "1.0.1" exclude("org.mongodb", "mongo-java-driver"),
+       "org.mongodb.morphia" % "morphia-validation" % "1.0.1" exclude("org.mongodb", "mongo-java-driver") exclude("javax.validation", "validation-api"),
+	   "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.0.1" exclude("org.mongodb", "mongo-java-driver"),
+	   "com.typesafe.play" %% "play-java" % "2.4.2" % "provided"
     )
 	
     val test = Seq(
-  	   "com.typesafe.play" %% "play-test" % "2.4.0" % "test",
+  	   "com.typesafe.play" %% "play-test" % "2.4.2" % "test",
 	     "junit" % "junit" % "4.12" % "test",
       "org.easytesting" % "fest-assert" % "1.4" % "test"
     )
@@ -56,7 +56,7 @@ object Play2MorphiaPluginBuild extends Build {
 
   object BuildSettings {
     val buildOrganization = "leodagdag"
-    val buildVersion = "0.2.4"
+    val buildVersion = "0.2.4.1"
     val buildScalaVersion = "2.11.6"
     val crossBuildVersions = Seq("2.11.6", "2.10.4")
     val buildSettings = Defaults.defaultSettings ++ Seq(
