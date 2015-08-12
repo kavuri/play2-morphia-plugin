@@ -15,6 +15,10 @@ object Play2MorphiaPluginBuild extends Build {
     settings = buildSettings ++ Seq(
     libraryDependencies := runtime ++ test,
 
+    // publishing
+    //you should never set crossVersions to false on publicly published Scala artifacts.
+    crossPaths := true,
+	   
       publishMavenStyle := true,
       publishTo := {
         if (buildVersion.trim.endsWith("SNAPSHOT"))
@@ -22,7 +26,7 @@ object Play2MorphiaPluginBuild extends Build {
         else
           Some(dropboxReleaseRepository)
       },
-	  
+
       scalacOptions ++= Seq("-Xlint", "-deprecation", "-unchecked", "-encoding", "utf8"),
       javacOptions ++= Seq("-source", "1.8", "-encoding", "utf8"),
 	    unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
@@ -40,10 +44,9 @@ object Play2MorphiaPluginBuild extends Build {
 
   object Dependencies {
     val runtime = Seq(
-	   "org.mongodb" % "mongodb-driver" % "3.0.2",
-       "org.mongodb.morphia" % "morphia" % "1.0.1" exclude("org.mongodb", "mongo-java-driver"),
-       "org.mongodb.morphia" % "morphia-validation" % "1.0.1" exclude("org.mongodb", "mongo-java-driver") exclude("javax.validation", "validation-api"),
-	   "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.0.1" exclude("org.mongodb", "mongo-java-driver"),
+       "org.mongodb.morphia" % "morphia" % "1.0.1",
+       "org.mongodb.morphia" % "morphia-validation" % "1.0.1",
+	   "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.0.1",
 	   "com.typesafe.play" %% "play-java" % "2.4.2" % "provided"
     )
 	
