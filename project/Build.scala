@@ -19,14 +19,16 @@ object Play2MorphiaPluginBuild extends Build {
     //you should never set crossVersions to false on publicly published Scala artifacts.
     crossPaths := true,
 	   
-      publishMavenStyle := true,
-      publishTo := {
-        if (buildVersion.trim.endsWith("SNAPSHOT"))
-          Some(dropboxSnapshotRepository)
-        else
-          Some(dropboxReleaseRepository)
-      },
+    publishMavenStyle := true,
+	
+    publishTo := {
+        if (version.value.trim.endsWith("SNAPSHOT"))
+	     Some(Resolver.file("file",  new File("C:\\mvn-repo\\snapshots")))
+       else
+	     Some(Resolver.file("file",  new File("C:\\mvn-repo\\releases")))
+    },
 
+	  
       scalacOptions ++= Seq("-Xlint", "-deprecation", "-unchecked", "-encoding", "utf8"),
       javacOptions ++= Seq("-source", "1.8", "-encoding", "utf8"),
 	    unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
