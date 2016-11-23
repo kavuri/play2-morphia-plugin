@@ -1,18 +1,8 @@
 package leodagdag.play2morphia.test;
 
-import org.mongodb.morphia.query.Query;
-import leodagdag.play2morphia.MorphiaPlugin;
-import leodagdag.play2morphia.test.models.*;
-import leodagdag.play2morphia.test.utils.TestConfig;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 

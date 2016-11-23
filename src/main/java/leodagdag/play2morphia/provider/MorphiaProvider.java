@@ -1,4 +1,6 @@
-package leodagdag.play2morphia;
+package leodagdag.play2morphia.provider;
+
+import leodagdag.play2morphia.IMorphia;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

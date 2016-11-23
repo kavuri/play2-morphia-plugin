@@ -1,7 +1,6 @@
 package leodagdag.play2morphia.test;
 
 import com.mongodb.DBCollection;
-import leodagdag.play2morphia.MorphiaPlugin;
 import leodagdag.play2morphia.test.utils.TestConfig;
 import org.apache.commons.lang3.StringUtils;
 

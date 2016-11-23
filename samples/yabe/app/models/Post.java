@@ -3,7 +3,6 @@ package models;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 //import leodagdag.play2morphia.Blob;
-import leodagdag.play2morphia.Model;
 import org.bson.types.ObjectId;
 
 @Entity

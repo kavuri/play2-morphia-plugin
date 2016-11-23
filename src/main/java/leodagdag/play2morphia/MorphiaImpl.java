@@ -3,7 +3,7 @@ package leodagdag.play2morphia;
 import com.mongodb.*;
 import com.mongodb.gridfs.GridFS;
 import leodagdag.play2morphia.IMorphia;
-import leodagdag.play2morphia.Model;
+//import leodagdag.play2morphia.Model;
 import leodagdag.play2morphia.utils.*;
 import org.mongodb.morphia.AbstractEntityInterceptor;
 import org.mongodb.morphia.Datastore;
@@ -19,10 +19,7 @@ import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-import play.Application;
-import play.Configuration;
-import play.Logger;
-import play.Play;
+import play.*;
 import play.inject.ApplicationLifecycle;
 import play.libs.F;
 
@@ -46,10 +43,18 @@ public class MorphiaImpl implements IMorphia {
     private Datastore ds = null;
     private GridFS gridfs;
 
-    public MorphiaImpl(String prefixName, Application application, ApplicationLifecycle lifecycle, IPasswordDecryptor passwordDecryptor) {
+    private Configuration configuration ;
+    private Environment environment ;
+
+    public MorphiaImpl(String prefixName,
+                       Application application,
+                       ApplicationLifecycle lifecycle,
+                       Configuration configuration, Environment environment, IPasswordDecryptor passwordDecryptor) {
         this.prefixName = prefixName ;
         this.application = application ;
         this.lifecycle = lifecycle ;
+        this.configuration = configuration ;
+        this.environment = environment ;
         this.passwordDecryptor = passwordDecryptor ;
         lifecycle.addStopHook(() -> {
             stop();
@@ -116,7 +121,8 @@ public class MorphiaImpl implements IMorphia {
         Configuration morphiaConf = null ;
 
         try {
-            morphiaConf = Configuration.root().getConfig(prefixName);
+            //morphiaConf = Configuration.root().getConfig(prefixName);
+            morphiaConf = configuration.getConfig(prefixName) ;
             if (morphiaConf == null) {
                 throw Configuration.root().reportError(prefixName, "Missing Morphia configuration", null);
             }
@@ -134,7 +140,7 @@ public class MorphiaImpl implements IMorphia {
             }
 
             String seeds = null ;
-            if(Play.isDev()) {
+            if(environment.isDev()) {
                 seeds = morphiaConf.getString(ConfigKey.DB_DEV_SEEDS.getKey());
             } else {
                 seeds = morphiaConf.getString(ConfigKey.DB_SEEDS.getKey());
@@ -177,7 +183,7 @@ public class MorphiaImpl implements IMorphia {
 
             morphia = new Morphia();
             // To prevent problem during hot-reload
-            if (application.isDev()) {
+            if (environment.isDev()) {
                 morphia.getMapper().getOptions().setObjectFactory( new PlayCreator()) ;
             }
             // Configure validator
@@ -196,6 +202,7 @@ public class MorphiaImpl implements IMorphia {
             gridfs = new GridFS(ds.getDB(), uploadCollection);
             MorphiaLogger.debug("GridFS created", "");
             MorphiaLogger.debug("Add Interceptor...", "");
+            /*
             morphia.getMapper().addInterceptor(new AbstractEntityInterceptor() {
 
                 @Override
@@ -206,6 +213,7 @@ public class MorphiaImpl implements IMorphia {
                     }
                 }
             });
+            */
             MorphiaLogger.debug("Classes mapping...", "");
             mapClasses();
             MorphiaLogger.debug("End of initializing Morphia", "");

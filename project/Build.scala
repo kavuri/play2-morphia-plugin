@@ -1,5 +1,8 @@
 import sbt._
 import Keys._
+import play.sbt.PlayImport._
+import PlayKeys._
+import play.sbt.PlayJava
 
 object Play2MorphiaPluginBuild extends Build {
 
@@ -7,12 +10,7 @@ object Play2MorphiaPluginBuild extends Build {
   import Dependencies._
   import BuildSettings._
 
-  val commonSettings = net.virtualvoid.sbt.graph.Plugin.graphSettings
-  
-  lazy val Play2MorphiaPlugin = Project(
-    "play2-morphia-plugin",
-    file("."),
-    settings = buildSettings ++ Seq(
+  lazy val Play2MorphiaPlugin = Project("play2-morphia-plugin", file(".")).enablePlugins(PlayJava).settings(buildSettings).settings(
     libraryDependencies := runtime ++ test,
 
     // publishing
@@ -31,11 +29,10 @@ object Play2MorphiaPluginBuild extends Build {
 	  
       scalacOptions ++= Seq("-Xlint", "-deprecation", "-unchecked", "-encoding", "utf8"),
       javacOptions ++= Seq("-source", "1.8", "-encoding", "utf8"),
-	    unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
+      unmanagedResourceDirectories in Compile <+= baseDirectory( _ / "conf" ),
       resolvers ++= Seq(DefaultMavenRepository, Resolvers.typesafeRepository),
       checksums := Nil // To prevent proxyToys downloding fails https://github.com/leodagdag/play2-morphia-plugin/issues/11,
-    )
-  ).settings(commonSettings:_*)
+  )
 
   object Resolvers {
     val githubRepository = Resolver.file("GitHub Repository", Path.userHome / "dev" / "leodagdag.github.com" / "repository" asFile)(Resolver.ivyStylePatterns)
@@ -46,24 +43,23 @@ object Play2MorphiaPluginBuild extends Build {
 
   object Dependencies {
     val runtime = Seq(
-       "org.mongodb.morphia" % "morphia" % "1.0.1",
-       "org.mongodb.morphia" % "morphia-validation" % "1.0.1",
-	   "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.0.1",
-	   "com.typesafe.play" %% "play-java" % "2.4.2" % "provided"
+       javaWs,
+       "org.mongodb.morphia" % "morphia" % "1.2.1",
+       "org.mongodb.morphia" % "morphia-validation" % "1.2.1",
+       "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.2.1"
     )
 	
     val test = Seq(
-  	   "com.typesafe.play" %% "play-test" % "2.4.2" % "test",
-	     "junit" % "junit" % "4.12" % "test",
+      "junit" % "junit" % "4.12" % "test",
       "org.easytesting" % "fest-assert" % "1.4" % "test"
     )
   }
 
   object BuildSettings {
     val buildOrganization = "leodagdag"
-    val buildVersion = "0.2.4.1"
-    val buildScalaVersion = "2.11.6"
-    val crossBuildVersions = Seq("2.11.6", "2.10.4")
+    val buildVersion = "0.2.5.8"
+    val buildScalaVersion = "2.11.8"
+    val crossBuildVersions = Seq("2.11.8")
     val buildSettings = Defaults.defaultSettings ++ Seq(
       organization := buildOrganization,
       version := buildVersion,

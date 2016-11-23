@@ -4,8 +4,11 @@ package leodagdag.play2morphia;
  * Created by guofeng on 2015/5/28.
  */
 import com.google.common.collect.ImmutableList;
-import leodagdag.play2morphia.utils.ConfigKey;
-import play.api.*;
+import leodagdag.play2morphia.provider.DefaultMorphiaApi;
+import leodagdag.play2morphia.provider.MorphiaApi;
+import leodagdag.play2morphia.provider.MorphiaProvider;
+import play.api.Configuration;
+import play.api.Environment;
 import play.api.inject.*;
 import play.libs.Scala;
 import scala.collection.Seq;
@@ -13,6 +16,7 @@ import scala.collection.Seq;
 import java.util.List;
 
 public class MorphiaModule extends Module {
+
     @Override
     public Seq<Binding<?>> bindings(Environment environment, Configuration configuration) {
         String defaultDBPrefix = configuration.underlying().getString("play.modules.morphia.defaultPrefix") ;

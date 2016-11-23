@@ -15,7 +15,7 @@ to publish it to the local repository, so that you could reference it in your pl
 
 Add the following to your build's library dependency:
 ``````
-"leodagdag"  %% "play2-morphia-plugin"  % "0.2.4.1"
+"leodagdag"  %% "play2-morphia-plugin"  % "0.2.5.0"
 ``````
 
 ### Configuring the connection in conf/application.conf
@@ -37,20 +37,9 @@ morphia.db.username=<username>
 morphia.db.password=<password>
 ``````
 
-### The MorphiaPlugin class
-Using the following methods in the MorphiaPlugin class for data base operations
-`````
-    public static Morphia morphia() ;
-    public static Datastore ds() ;
-    public static Datastore ds(String dbname) ;
-    public static GridFS gridFs() ;
-`````
-
-The plugin is deprecated in Play 2.4. You'd better use dependency injection for the database operations. The MorphiaPlugin class is provided here for the compatibility for the previous versions. 
-
 ### Dependency Injection 
 
-Play 2.4 supports [Dependency Injection](https://www.playframework.com/documentation/2.4.x/JavaDependencyInjection). There is a morphia module defined. You could inject it by
+Play 2.5 supports [Dependency Injection](https://www.playframework.com/documentation/2.55.x/JavaDependencyInjection). There is a morphia module defined. You could inject it by
 ``````
   @Inject IMorphia morphia ;
 ``````

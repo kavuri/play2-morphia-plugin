@@ -1,4 +1,4 @@
-package leodagdag.play2morphia;
+package leodagdag.play2morphia.provider;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;

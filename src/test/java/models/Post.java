@@ -1,7 +1,6 @@
 package models;
 
 import org.mongodb.morphia.annotations.*;
-import leodagdag.play2morphia.Model;
 import org.bson.types.ObjectId;
 
 @Entity
@@ -18,7 +17,7 @@ import org.bson.types.ObjectId;
         @Index(value = "title, type")
 })
 */
-public class Post extends Model {
+public class Post{
 
     @Id
     public ObjectId id;
@@ -26,12 +25,5 @@ public class Post extends Model {
     public String title;
 
     public String type;
-
-    //public Blob picture;
-
-    public static Finder<ObjectId, Post> find() {
-        return new Finder<ObjectId, Post>(ObjectId.class, Post.class);
-    }
-
 
 }
