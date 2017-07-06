@@ -3,6 +3,8 @@ Plug-in to use Morphia/MongoDB with [Play! framework](https://www.playframework.
 
 _inpired by [greenlaw110 / play-morphia](https://github.com/greenlaw110/play-morphia)_
 
+Note: This repository is not maintained. It is moved to [play-morphia-module repo](https://github.com/auslides/play-morphia-module)
+
 # Publish it
 
 Using
