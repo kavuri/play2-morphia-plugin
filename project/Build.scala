@@ -44,9 +44,10 @@ object Play2MorphiaPluginBuild extends Build {
   object Dependencies {
     val runtime = Seq(
        javaWs,
-       "org.mongodb.morphia" % "morphia" % "1.2.1",
-       "org.mongodb.morphia" % "morphia-validation" % "1.2.1",
-       "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.2.1"
+       "org.mongodb.morphia" % "morphia" % "1.3.1",
+       "org.mongodb.morphia" % "morphia-validation" % "1.3.1",
+       "org.reflections" % "reflections" % "0.9.11",
+       "org.mongodb.morphia" % "morphia-logging-slf4j" % "1.3.1"
     )
 	
     val test = Seq(
@@ -58,8 +59,8 @@ object Play2MorphiaPluginBuild extends Build {
   object BuildSettings {
     val buildOrganization = "leodagdag"
     val buildVersion = "0.2.5.8"
-    val buildScalaVersion = "2.11.8"
-    val crossBuildVersions = Seq("2.11.8")
+    val buildScalaVersion = "2.12.4"
+    val crossBuildVersions = Seq("2.12.4")
     val buildSettings = Defaults.defaultSettings ++ Seq(
       organization := buildOrganization,
       version := buildVersion,
